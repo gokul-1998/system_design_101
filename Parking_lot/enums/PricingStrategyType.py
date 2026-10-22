@@ -10,7 +10,7 @@ public enum PricingStrategyType {
 
 from enum import Enum
 
-class GateType:
+class GateType(Enum):
     TIME_BASED="Time Based" 
     EVENT_BASED="Event Based"
 

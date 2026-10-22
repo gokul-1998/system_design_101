@@ -11,7 +11,7 @@ public enum PaymentStatus {
 
 from enum import Enum
 
-class GateType:
+class GateType(Enum):
     PENDING="Pending"
     SUCCESS="Success"
     FAILED="Failed"

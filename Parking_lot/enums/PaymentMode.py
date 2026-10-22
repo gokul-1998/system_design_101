@@ -7,7 +7,7 @@ public enum PaymentMode {
 """
 from enum import Enum
 
-class GateType:
+class GateType(Enum):
     CASH="Cash"
     UPI="Upi"
     CARD="Card"

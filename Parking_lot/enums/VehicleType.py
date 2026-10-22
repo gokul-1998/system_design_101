@@ -9,7 +9,7 @@ public enum VehicleType {
 
 from enum import Enum
 
-class GateType:
+class GateType(Enum):
     CAR="car" 
     BIKE="bike"
     TRUCK="truck"
