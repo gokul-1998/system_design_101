@@ -16,5 +16,5 @@ from abc import ABC, abstractmethod
 class PaymentStrategy(ABC):
     
     @abstractmethod
-    def processPayment(self, ticket: Ticket,amount:float) -> dict:
+    def processPayment(self, ticket: Ticket,amount:float) -> bool:
         pass
