@@ -5,11 +5,11 @@ public enum PaymentMode {
     CASH, UPI, CARD
 }
 """
+
 from enum import Enum
 
-class GateType(Enum):
-    CASH="Cash"
-    UPI="Upi"
-    CARD="Card"
 
-
+class PaymentMode(Enum):
+    CASH = "CASH"
+    UPI = "UPI"
+    CARD = "CARD"

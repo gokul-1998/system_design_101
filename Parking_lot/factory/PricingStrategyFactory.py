@@ -15,3 +15,16 @@ public class PricingStrategyFactory {
 
 """
 
+from ..enums import PricingStrategyType
+from ..strategy.pricing import TimeBasedPricing, EventBasedPricing, PricingStrategy
+
+class PricingStrategyFactory:
+    @staticmethod
+    def get(type: PricingStrategyType) -> PricingStrategy:
+        match type:
+            case PricingStrategyType.TIME_BASED:
+                return TimeBasedPricing()
+            case PricingStrategyType.EVENT_BASED:
+                return EventBasedPricing()
+            case _:
+                raise Exception(f"Unknown pricing strategy type: {type}")

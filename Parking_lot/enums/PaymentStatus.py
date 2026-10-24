@@ -8,11 +8,10 @@ public enum PaymentStatus {
 }
 """
 
-
 from enum import Enum
 
-class GateType(Enum):
-    PENDING="Pending"
-    SUCCESS="Success"
-    FAILED="Failed"
-    
+
+class PaymentStatus(Enum):
+    PENDING = "PENDING"
+    SUCCESS = "SUCCESS"
+    FAILED = "FAILED"

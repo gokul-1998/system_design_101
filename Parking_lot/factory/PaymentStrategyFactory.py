@@ -8,13 +8,10 @@ public interface PaymentStrategy {
 }
 """
 
-
-
 from abc import ABC, abstractmethod
-
+from ..model import Ticket
 # Defining the interface
 class PaymentStrategy(ABC):
-    
     @abstractmethod
     def processPayment(self, ticket: Ticket,amount:float) -> bool:
         pass

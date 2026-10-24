@@ -14,3 +14,20 @@ public class VehicleFactory {
     }
 }
 """
+
+from ..enums import VehicleType
+from ..model import Car, Bike, Truck, Vehicle
+
+class VehicleFactory:
+    @staticmethod
+    def create(number: str, type: VehicleType) -> Vehicle:
+        match type:
+            case VehicleType.CAR:
+                return Car(number)
+            case VehicleType.BIKE:
+                return Bike(number)
+            case VehicleType.TRUCK:
+                return Truck(number)
+            case _:
+                raise Exception(f"Unknown vehicle type: {type}")
+
