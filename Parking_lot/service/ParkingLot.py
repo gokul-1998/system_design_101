@@ -103,3 +103,98 @@ public class ParkingLot {
     }
 }
 """
+
+import uuid
+from datetime import datetime
+from typing import Dict, Optional
+
+from ..enums.PaymentMode import PaymentMode
+from ..enums.PricingStrategyType import PricingStrategyType
+from ..factory.PaymentStrategyFactory import PaymentStrategyFactory
+from ..factory.PricingStrategyFactory import PricingStrategyFactory
+from ..model.ParkingFloor import ParkingFloor
+from ..model.ParkingSpot import ParkingSpot
+from ..model.Ticket import Ticket
+from ..model.Vehicle import Vehicle
+from ..strategy.payment.PaymentStrategy import PaymentStrategy
+from ..strategy.pricing.PricingStrategy import PricingStrategy
+from .PaymentProcessor import PaymentProcessor
+
+
+class ParkingLot:
+    _INSTANCE = None
+
+    def __init__(self):
+        self.floors: Dict[str, ParkingFloor] = {}
+        self.activeTickets: Dict[str, Ticket] = {}
+        self.pricingStrategy: PricingStrategy = PricingStrategyFactory.get(PricingStrategyType.TIME_BASED)
+
+    @classmethod
+    def getInstance(cls) -> "ParkingLot":
+        if cls._INSTANCE is None:
+            cls._INSTANCE = ParkingLot()
+        return cls._INSTANCE
+
+    def setPricingStrategy(self, pricingStrategy: PricingStrategy):
+        self.pricingStrategy = pricingStrategy
+
+    def addFloor(self, floor: ParkingFloor):
+        self.floors[floor.getId()] = floor
+
+    # b1, b2 (one spot)
+    # car, bike
+
+    def parkVehicle(self, vehicle: Vehicle, entryTime: datetime) -> Optional[Ticket]:
+        for floor in self.floors.values():
+            spot = floor.findAvailableSpot(vehicle.getType())
+
+            if spot is not None:
+                # Successfully reserved the spot via atomic operation
+                ticketId = str(uuid.uuid4())
+                ticket = Ticket.builder() \
+                    .ticketId(ticketId) \
+                    .entryTime(entryTime) \
+                    .vehicle(vehicle) \
+                    .floorId(floor.getId()) \
+                    .spotId(spot.getId()) \
+                    .build()
+
+                self.activeTickets[ticketId] = ticket
+                print(f"Vehicle parked. Ticket: {ticketId}")
+                return ticket
+
+        print(f"No spot available for vehicle type: {vehicle.getType()}")
+        return None
+
+    def unparkVehicle(self, ticketId: str, exitTime: datetime, paymentMode: PaymentMode):
+        ticket = self.activeTickets.get(ticketId)
+        if ticket is None:
+            print("Invalid ticket ID.")
+            return
+
+        fee = self.pricingStrategy.calculateFee(
+            ticket.getVehicle().getType(),
+            ticket.getEntryTime(),
+            exitTime
+        )
+
+        strategy = PaymentStrategyFactory.get(paymentMode)
+        processor = PaymentProcessor(strategy)
+        paid = processor.pay(ticket, fee)
+
+        if not paid:
+            print("Vehicle cannot exit. Payment unsuccessful.")
+            return
+
+        spot = self.floors.get(ticket.getFloorId()).getSpots().get(ticket.getSpotId())
+        spot.vacate()
+        self.activeTickets.pop(ticketId, None)
+
+        print(f"Vehicle exited. Fee charged: ₹{fee}")
+
+    def printStatus(self):
+        for floorId, floor in self.floors.items():
+            print(f"Floor: {floorId}")
+            for spot in floor.getSpots().values():
+                status_str = "Occupied" if spot.isOccupied() else "Free"
+                print(f" Spot {spot.getId()} [{spot.getAllowedType()}] - {status_str}")

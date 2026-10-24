@@ -13,3 +13,7 @@ class PaymentMode(Enum):
     CASH = "CASH"
     UPI = "UPI"
     CARD = "CARD"
+
+    @classmethod
+    def valueOf(cls, name: str):
+        return cls[name]

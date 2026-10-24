@@ -1,17 +1,34 @@
 """
-package org.nailyourinterview.lld.parking_lot.strategy.payment;
+package org.nailyourinterview.lld.parking_lot.factory;
 
-import org.nailyourinterview.lld.parking_lot.model.Ticket;
+import org.nailyourinterview.lld.parking_lot.enums.PaymentMode;
+import org.nailyourinterview.lld.parking_lot.strategy.payment.*;
 
-public interface PaymentStrategy {
-    boolean processPayment(Ticket ticket, double amount);
+public class PaymentStrategyFactory {
+    public static PaymentStrategy get(PaymentMode mode) {
+        return switch (mode) {
+            case CASH -> new CashPayment();
+            case UPI -> new UpiPayment();
+            case CARD -> new CardPayment();
+        };
+    }
 }
 """
 
-from abc import ABC, abstractmethod
-from ..model import Ticket
-# Defining the interface
-class PaymentStrategy(ABC):
-    @abstractmethod
-    def processPayment(self, ticket: Ticket,amount:float) -> bool:
-        pass
+from ..enums.PaymentMode import PaymentMode
+from ..strategy.payment.PaymentStrategy import PaymentStrategy
+from ..strategy.payment.CashPayment import CashPayment
+from ..strategy.payment.UpiPayment import UpiPayment
+from ..strategy.payment.CardPayment import CardPayment
+
+
+class PaymentStrategyFactory:
+    @staticmethod
+    def get(mode: PaymentMode) -> PaymentStrategy:
+        match mode:
+            case PaymentMode.CASH:
+                return CashPayment()
+            case PaymentMode.UPI:
+                return UpiPayment()
+            case PaymentMode.CARD:
+                return CardPayment()

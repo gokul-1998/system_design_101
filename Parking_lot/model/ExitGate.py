@@ -25,9 +25,10 @@ public class ExitGate extends Gate {
 """
 
 from .Gate import Gate
-from ..enums import GateType, PaymentMode
-from ..service import ParkingLot
-import datetime
+from ..enums.GateType import GateType
+from ..enums.PaymentMode import PaymentMode
+from datetime import datetime
+
 
 class ExitGate(Gate):
     def __init__(self, id: str):
@@ -36,5 +37,6 @@ class ExitGate(Gate):
     def getType(self) -> GateType:
         return GateType.EXIT
 
-    def unparkVehicle(self, ticketId: str, exitTime: datetime.datetime, paymentMode: PaymentMode):
+    def unparkVehicle(self, ticketId: str, exitTime: datetime, paymentMode: PaymentMode):
+        from ..service.ParkingLot import ParkingLot
         ParkingLot.getInstance().unparkVehicle(ticketId, exitTime, paymentMode)

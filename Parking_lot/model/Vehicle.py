@@ -1,4 +1,3 @@
-
 """
 package org.nailyourinterview.lld.parking_lot.model;
 
@@ -14,15 +13,17 @@ public abstract class Vehicle {
 }
 """
 
-
-
 from abc import ABC
-from dataclasses import dataclass
-
 from ..enums.VehicleType import VehicleType
 
 
-@dataclass
 class Vehicle(ABC):
-    number: str
-    type: VehicleType
+    def __init__(self, number: str, type: VehicleType):
+        self.number = number
+        self.type = type
+
+    def getNumber(self) -> str:
+        return self.number
+
+    def getType(self) -> VehicleType:
+        return self.type

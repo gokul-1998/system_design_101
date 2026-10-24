@@ -15,3 +15,7 @@ class PaymentStatus(Enum):
     PENDING = "PENDING"
     SUCCESS = "SUCCESS"
     FAILED = "FAILED"
+
+    @classmethod
+    def valueOf(cls, name: str):
+        return cls[name]

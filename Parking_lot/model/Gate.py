@@ -26,15 +26,16 @@ public abstract class Gate {
 
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
-
-from ..enums import GateType
+from ..enums.GateType import GateType
 
 
-@dataclass
 class Gate(ABC):
-    id: str
+    def __init__(self, id: str):
+        self.id = id
+
+    def getId(self) -> str:
+        return self.id
 
     @abstractmethod
-    def get_type(self) -> GateType:
+    def getType(self) -> GateType:
         pass

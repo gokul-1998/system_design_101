@@ -13,3 +13,7 @@ from enum import Enum
 class GateType(Enum):
     ENTRY = "ENTRY"
     EXIT = "EXIT"
+
+    @classmethod
+    def valueOf(cls, name: str):
+        return cls[name]

@@ -15,8 +15,11 @@ public class PricingStrategyFactory {
 
 """
 
-from ..enums import PricingStrategyType
-from ..strategy.pricing import TimeBasedPricing, EventBasedPricing, PricingStrategy
+from ..enums.PricingStrategyType import PricingStrategyType
+from ..strategy.pricing.PricingStrategy import PricingStrategy
+from ..strategy.pricing.TimeBasedPricing import TimeBasedPricing
+from ..strategy.pricing.EventBasedPricing import EventBasedPricing
+
 
 class PricingStrategyFactory:
     @staticmethod
@@ -26,5 +29,3 @@ class PricingStrategyFactory:
                 return TimeBasedPricing()
             case PricingStrategyType.EVENT_BASED:
                 return EventBasedPricing()
-            case _:
-                raise Exception(f"Unknown pricing strategy type: {type}")

@@ -19,21 +19,84 @@ public class Ticket {
 }
 """
 
-
-from dataclasses import dataclass, field
 from datetime import datetime
-
-from .vehicle import Vehicle
 from ..enums.PaymentStatus import PaymentStatus
 
 
-@dataclass
 class Ticket:
-    ticket_id: str
-    entry_time: datetime
-    vehicle: Vehicle
-    floor_id: str
-    spot_id: str
-    payment_status: PaymentStatus = field(
-        default=PaymentStatus.PENDING
-    )
+    def __init__(self, ticketId: str = None, entryTime: datetime = None, vehicle=None, floorId: str = None, spotId: str = None,
+                 paymentStatus: PaymentStatus = PaymentStatus.PENDING):
+        self.ticketId = ticketId
+        self.entryTime = entryTime
+        self.vehicle = vehicle
+        self.floorId = floorId
+        self.spotId = spotId
+        self.paymentStatus = paymentStatus
+
+    def getTicketId(self) -> str:
+        return self.ticketId
+
+    def getEntryTime(self) -> datetime:
+        return self.entryTime
+
+    def getVehicle(self):
+        return self.vehicle
+
+    def getFloorId(self) -> str:
+        return self.floorId
+
+    def getSpotId(self) -> str:
+        return self.spotId
+
+    def getPaymentStatus(self) -> PaymentStatus:
+        return self.paymentStatus
+
+    def setPaymentStatus(self, paymentStatus: PaymentStatus):
+        self.paymentStatus = paymentStatus
+
+    class _Builder:
+        def __init__(self):
+            self._ticketId = None
+            self._entryTime = None
+            self._vehicle = None
+            self._floorId = None
+            self._spotId = None
+            self._paymentStatus = PaymentStatus.PENDING
+
+        def ticketId(self, ticketId: str):
+            self._ticketId = ticketId
+            return self
+
+        def entryTime(self, entryTime: datetime):
+            self._entryTime = entryTime
+            return self
+
+        def vehicle(self, vehicle):
+            self._vehicle = vehicle
+            return self
+
+        def floorId(self, floorId: str):
+            self._floorId = floorId
+            return self
+
+        def spotId(self, spotId: str):
+            self._spotId = spotId
+            return self
+
+        def paymentStatus(self, paymentStatus: PaymentStatus):
+            self._paymentStatus = paymentStatus
+            return self
+
+        def build(self):
+            return Ticket(
+                ticketId=self._ticketId,
+                entryTime=self._entryTime,
+                vehicle=self._vehicle,
+                floorId=self._floorId,
+                spotId=self._spotId,
+                paymentStatus=self._paymentStatus
+            )
+
+    @staticmethod
+    def builder():
+        return Ticket._Builder()

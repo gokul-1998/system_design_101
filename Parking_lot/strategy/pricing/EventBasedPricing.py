@@ -25,3 +25,23 @@ public class EventBasedPricing implements PricingStrategy {
     }
 }
 """
+
+import math
+from datetime import datetime
+from ...enums.VehicleType import VehicleType
+from .PricingStrategy import PricingStrategy
+
+
+class EventBasedPricing(PricingStrategy):
+    EVENT_HOURLY_RATES = {
+        VehicleType.CAR: 50.0,
+        VehicleType.BIKE: 30.0,
+        VehicleType.TRUCK: 70.0,
+    }
+
+    def calculateFee(self, type: VehicleType, entryTime: datetime, exitTime: datetime) -> float:
+        durationMinutes = (exitTime - entryTime).total_seconds() / 60.0
+        hours = math.ceil(durationMinutes / 60.0)
+
+        ratePerHour = self.EVENT_HOURLY_RATES.get(type, 0.0)
+        return float(ratePerHour * hours)

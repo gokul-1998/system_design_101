@@ -62,3 +62,85 @@ public class Main {
 
  */
 """
+
+import os
+import sys
+import threading
+from datetime import datetime
+
+if sys.stdout and hasattr(sys.stdout, 'reconfigure'):
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
+
+if __package__ is None or __package__ == "":
+    parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    if parent_dir not in sys.path:
+        sys.path.insert(0, parent_dir)
+    __package__ = "Parking_lot"
+
+from .enums.PricingStrategyType import PricingStrategyType
+from .enums.VehicleType import VehicleType
+from .enums.PaymentMode import PaymentMode
+from .factory.PricingStrategyFactory import PricingStrategyFactory
+from .factory.VehicleFactory import VehicleFactory
+from .model.EntryGate import EntryGate
+from .model.ExitGate import ExitGate
+from .model.ParkingFloor import ParkingFloor
+from .model.ParkingSpot import ParkingSpot
+from .service.ParkingLot import ParkingLot
+from .utils.DateTimeParser import DateTimeParser
+
+
+def main():
+    lot = ParkingLot.getInstance()
+    entryGate = EntryGate("EG1")
+    exitGate = ExitGate("XG1")
+
+    lot.setPricingStrategy(PricingStrategyFactory.get(PricingStrategyType.valueOf("EVENT_BASED")))
+
+    floor1 = ParkingFloor("Floor1")
+    floor1.addSpot(ParkingSpot("F1S1", VehicleType.BIKE))
+    floor1.addSpot(ParkingSpot("F1S2", VehicleType.CAR))
+    floor1.addSpot(ParkingSpot("F1S3", VehicleType.TRUCK))
+    floor1.addSpot(ParkingSpot("F1S4", VehicleType.CAR))
+    lot.addFloor(floor1)
+
+    print("--------------------------")
+
+    bike1 = VehicleFactory.create("KA01AB1234", VehicleType.BIKE)
+    bike2 = VehicleFactory.create("KA01AB5678", VehicleType.BIKE)
+    entryTime = DateTimeParser.parse("21 May 7:30 AM 2025")
+    print(entryTime.replace(minute=0, second=0, microsecond=0))
+
+    t1 = threading.Thread(target=entryGate.parkVehicle, args=(bike1, entryTime))
+    t2 = threading.Thread(target=entryGate.parkVehicle, args=(bike2, entryTime))
+
+    t1.start()
+    t2.start()
+
+    t1.join()
+    t2.join()
+
+#    car = VehicleFactory.create("KA01AB1234", VehicleType.SEDAN)
+#
+#    entryTime = DateTimeParser.parse("21 May 7:30 AM 2025")
+#    ticket = entryGate.parkVehicle(car, entryTime)
+#
+#    print("--------------------------")
+#
+#    lot.printStatus()
+#
+#    print("--------------------------")
+#
+#    exitTime = DateTimeParser.parse("21 May 1:15 PM 2025")
+#    exitGate.unparkVehicle(ticket.getTicketId(), exitTime, PaymentMode.UPI)
+#
+#    print("--------------------------")
+#
+#    lot.printStatus()
+
+
+if __name__ == "__main__":
+    main()

@@ -13,3 +13,7 @@ class VehicleType(Enum):
     CAR = "CAR"
     BIKE = "BIKE"
     TRUCK = "TRUCK"
+
+    @classmethod
+    def valueOf(cls, name: str):
+        return cls[name]
